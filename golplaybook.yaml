@@ -1,0 +1,25 @@
+---
+- name: gameoflife
+  hosts: all
+  become: yes
+  tasks:
+    - name: install jdk
+      ansible.builtin.apt:
+        name: 
+          - openjdk-11-jdk
+          - tomcat9
+        update_cache: yes
+        state: present
+    - name: get url
+      ansible.builtin.get_url:
+        url: https://referenceapplicationskhaja.s3.us-west-2.amazonaws.com/gameoflife.war
+        dest: /tmp
+    - name: copy the file
+      ansible.builtin.copy:
+        src: /tmp/gameoflife.war
+        dest: /var/lib/tomcat9/webapps/
+    - name: reload the server
+      ansible.builtin.systemd:
+        enabled: yes
+        name: tomcat9
+        state: restarted
