@@ -1,0 +1,54 @@
+---
+- name: install wildfly
+  hosts: all
+  become: yes
+  tasks:
+    - name: install jdk
+      ansible.builtin.apt:
+        name: openjdk-11-jdk
+        state: present
+        update_cache: yes
+    - name: install curl and wget
+      ansible.builtin.apt:
+        name:
+          - curl
+          - wget
+        state: present
+    - name: get link from command
+      ansible.builtin.get_url:
+        url: https://github.com/wildfly/wildfly/releases/download/27.0.1.Final/wildfly-27.0.1.Final.tar.gz
+        dest: /tmp
+    - name: untar the file
+      ansible.builtin.unarchive:
+        src: /tmp/wildfly-27.0.1.Final.tar.gz
+        dest: /opt/wildfly
+        mode: '777'
+    - name: creating directory
+      ansible.builtin.file:
+        path: /etc/wildfly/
+        state: directory
+        mode: '777'
+    - name: copy the file
+      ansible.builtin.copy:
+        src: /opt/wildfly/wildfly-27.0.1.Final/docs/contrib/scripts/systemd/wildfly.conf
+        dest: /etc/wildfly/
+    - name: copy the file
+      ansible.builtin.copy:
+        src: /opt/wildfly/wildfly-27.0.1.Final/docs/contrib/scripts/systemd/wildfly.service
+        dest: /etc/systemd/system/
+        mode: '777'
+    - name: copy the file
+      ansible.builtin.copy:
+        src: /opt/wildfly/wildfly-27.0.1.Final/docs/contrib/scripts/systemd/launch.sh
+        dest: /opt/wildfly/bin/
+        mode: '777'
+    - name: adding permissions
+      ansible.builtin.command: sudo chmod +x /opt/wildfly/bin/launch.sh
+    - name: changing permissions
+      ansible.builtin.command: sudo chown -R wildfly:wildfly /opt/wildfly
+    - name: reload the systemd state
+      ansible.builtin.systemd:
+        name: wildfly
+        daemon_reload: true
+        enabled: true
+        state: started
