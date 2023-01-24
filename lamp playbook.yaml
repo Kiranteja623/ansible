@@ -1,0 +1,10 @@
+---
+- name: installing lamp in centos
+  hosts: all
+  become: yes
+  tasks:
+    - name: installing httpd
+      ansible.builtin.dnf:
+        - name: httpd
+          state: present
+          update_cache: yes

@@ -1,0 +1,13 @@
+---
+name: installing flask
+hosts: all
+become: yes
+tasks:
+  - name: get url
+    ansible.builtin.get_url:
+      - url: https://github.com/Sysnove/flask-hello-world.git
+        dest: /tmp
+  - name: move the folder
+    ansible.builtin.file:
+      - src: /tmp/flask-hello-world
+        path: 

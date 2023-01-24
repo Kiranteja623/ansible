@@ -17,17 +17,21 @@
     - name: get link from command
       ansible.builtin.get_url:
         url: https://github.com/wildfly/wildfly/releases/download/27.0.1.Final/wildfly-27.0.1.Final.tar.gz
-        dest: /tmp
+        dest: /opt/
     - name: untar the file
       ansible.builtin.unarchive:
         src: /tmp/wildfly-27.0.1.Final.tar.gz
-        dest: /opt/wildfly
-        mode: '777'
+        dest: /opt/
+    - name: copy all files to /opt/wildfly/
+      ansible.builtin.copy:
+        src: /opt/wildfly-27.0.1.Final/
+        dest: /opt/wildfly/
     - name: creating directory
+    
       ansible.builtin.file:
         path: /etc/wildfly/
         state: directory
-        mode: '777'
+        mode: '0777'
     - name: copy the file
       ansible.builtin.copy:
         src: /opt/wildfly/wildfly-27.0.1.Final/docs/contrib/scripts/systemd/wildfly.conf
