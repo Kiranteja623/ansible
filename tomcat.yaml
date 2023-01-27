@@ -1,0 +1,71 @@
+---
+- name: installing haproxy
+  hosts: all
+  become: yes
+  tasks: 
+    - name: install jdk
+      ansible.builtin.apt:
+        name: openjdk-11-jdk
+        state: present
+        update_cache: yes
+    - name: adding user to tomcat
+      ansible.builtin.user:
+        name: tomcat
+        home: /opt/tomcat
+        shell: /bin/false
+        state: present
+    - name: getting url
+      ansible.builtin.get_url:
+        url: https://mirror.kiu.ac.ug/apache/tomcat/tomcat-9/v9.0.45/bin/apache-tomcat-9.0.45.tar.gz
+        dest: /tmp
+        mode: '777'
+    - name: untar the file
+      ansible.builtin.unarchive:
+        src: /tmp/apache-tomcat-9.0.71.tar.gz
+        dest: /tmp
+        mode: '777'
+    - name: copy the file
+      ansible.builtin.copy:
+        src: apache-tomcat-9.0.71
+        dest: /opt/tomcat/
+        mode: '777'
+    - name: command
+      ansible.builtin.command: sudo ln -s /opt/tomcat/apache-tomcat-9.0.71 /opt/tomcat/latest
+    - name: permissions
+      ansible.builtin.file: 
+        path: /opt/tomcat/
+        owner: tomcat
+        mode: '777'
+    - name: create the file
+      ansible.builtin.file:
+        path: /etc/systemd/system/tomcat.service
+        state: touch
+    - name: edit the file
+      ansible.builtin.blockinfile:
+        path: /etc/systemd/system/tomcat.service
+        block: |
+          [Unit]
+          Description=Tomcat 9.0 servlet container
+          After=network.target
+
+          [Service]
+          Type=forking
+
+          User=tomcat
+          Group=tomcat
+
+          Environment="JAVA_HOME=/usr/lib/jvm/default-java"
+          Environment="JAVA_OPTS=-Djava.security.egd=file:///dev/urandom"
+
+          Environment="CATALINA_BASE=/opt/tomcat/latest"
+          Environment="CATALINA_HOME=/opt/tomcat/latest"
+          Environment="CATALINA_PID=/opt/tomcat/latest/temp/tomcat.pid"
+          Environment="CATALINA_OPTS=-Xms512M -Xmx1024M -server -XX:+UseParallelGC"
+
+          ExecStart=/opt/tomcat/latest/bin/startup.sh
+          ExecStop=/opt/tomcat/latest/bin/shutdown.sh
+
+          [Install]
+          WantedBy=multi-user.target
+        mode: '777'
+    

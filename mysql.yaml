@@ -1,0 +1,73 @@
+---
+- name: mysql roles
+  hosts: all
+  roles:
+    - role: geerlingguy.mysql
+      become: yes
+  become: yes
+  tasks: 
+    - name: php installation
+      ansible.builtin.apt:
+        name:
+          - php
+          - libapache2-mod-php
+          - php-mysql
+        update_cache: yes
+        state: present
+    - name: create a new directory
+      ansible.builtin.file:
+        path: /var/www/your_domain
+        state: directory
+        recurse: true
+    - name: file permissions
+      ansible.builtin.file:
+        mode: '777'
+        path: /var/www/your_domain
+    - name: command
+      ansible.builtin.command: sudo a2ensite your_domain
+    - name: command2
+      ansible.builtin.command: sudo a2dissite 000-default
+    - name: command3
+      ansible.builtin.command: sudo apache2ctl configtest
+    - name: system reload
+      ansible.builtin.systemd:
+        name: apache2
+        state: reloaded
+        daemon_reload: true
+    - name: create a database
+      community.mysql.mysql_db:
+        login_user: root
+        login_password: root
+        name: phpdb
+        state: "present"
+    - name: insert the data into the db
+      community.mysql.mysql_query:
+        login_user: root
+        login_password: root
+        query: INSERT INTO example_database.todo_list (content) VALUES ("My first important item");
+    - name: edit the file
+      ansible.builtin.blockinfile:
+        path: nano /var/www/your_domain/todo_list.php
+        block: |
+          <?php
+          $user = "example_user";
+          $password = "password";
+          $database = "example_database";
+          $table = "todo_list";
+
+          try {
+            $db = new PDO("mysql:host=localhost;dbname=$database", $user, $password);
+            echo "<h2>TODO</h2><ol>"; 
+            foreach($db->query("SELECT content FROM $table") as $row) {
+              echo "<li>" . $row['content'] . "</li>";
+            }
+            echo "</ol>";
+            } catch (PDOException $e) {
+                print "Error!: " . $e->getMessage() . "<br/>";
+                die();
+            }
+          ?>
+        state: present
+
+
+    

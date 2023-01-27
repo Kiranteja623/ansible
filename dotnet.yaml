@@ -1,0 +1,24 @@
+---
+- name: dotnet installation
+  hosts: all
+  become: yes
+  tasks:
+    - name: dotnet6 installation
+      ansible.builtin.apt:
+        name: dotnet6
+        state: present
+        update_cache: yes
+    - name: dotnet7
+      ansible.builtin.get_url:
+        url: https://download.visualstudio.microsoft.com/download/pr/c646b288-5d5b-4c9c-a95b-e1fad1c0d95d/e13d71d48b629fe3a85f5676deb09e2d/dotnet-sdk-7.0.102-linux-x64.tar.gz
+        dest: /tmp
+    - name: untar the module
+      ansible.builtin.unarchive:
+        src: /tmp/'dotnet-sdk-7.0.102-linux-x64.tar.gz; filename*=UTF-8'\'''\''dotnet-sdk-7.0.102-linux-x64.tar.gz'
+        dest: /tmp
+
+
+
+
+
+
