@@ -1,0 +1,24 @@
+---
+- name: mongodb installation and query
+  become: yes
+  hosts: all
+  tasks:
+    - name: install softwares
+      ansible.builtin.apt:
+        name:
+          - dirmngr
+          - gnupg
+          - apt-transport-https
+          - ca-certificates
+          - software-properties-common
+    - name: commands
+      ansible.builtin.raw: wget -qO - https://www.mongodb.org/static/pgp/server-5.0.asc | sudo apt-key add -
+    - name: command
+      ansible.builtin.raw: echo "deb http://security.ubuntu.com/ubuntu focal-security main" | sudo tee /etc/apt/sources.list.d/focal-security.list
+    - name: install lib
+      ansible.builtin.apt:
+        force_apt_get: true
+        update_cache: true
+        name: libssl-dev
+    
+    

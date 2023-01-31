@@ -1,0 +1,46 @@
+---
+- name: mongodb installation and query
+  hosts: all
+  become: yes
+  tasks:
+    - name: command
+      ansible.builtin.apt:
+        name:
+          - wget
+          - curl
+          - gnupg2
+          - software-properties-common
+          - apt-transport-https
+          - ca-certificates
+          - lsb-release
+        update_cache: true
+        state: "present"
+    - name: importing public key
+      ansible.builtin.apt_key:
+        url: https://www.mongodb.org/static/pgp/server-6.0.asc
+        keyring: /etc/apt/trusted.gpg.d/mongodb-6.gpg
+        state: present
+    - name: command
+      ansible.builtin.command: echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu $(lsb_release -cs)/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
+    - name: url
+      ansible.builtin.uri: 
+        url: http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.16_amd64.deb
+    - name: install packages
+      ansible.builtin.dpkg_selections:
+        name: libssl1.1_1.1.1f-1ubuntu2.16_amd64.deb
+        selection: "install"
+    - name: install mongodb
+      ansible.builtin.apt:
+        name: mongodb-org
+        force_apt_get: true
+        update_cache: true
+        state: "present"
+
+
+    - name: Add MongoDB repository
+      apt_repository: 
+        repo: 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' 
+        state: present
+
+    
+

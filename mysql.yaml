@@ -68,6 +68,18 @@
             }
           ?>
         state: present
+    - name: create a db
+      community.mysql.mysql_db:
+        login_user: root
+        
+        login_password: root
+        name: phpdb
+        state: "present"
+    - name: insert the data into the db
+      community.mysql.mysql_query:
+        login_user: root
+        login_password: root
+        query: INSERT INTO phpdb.todo_list (content) VALUES ("My first important item");
 
 
     
