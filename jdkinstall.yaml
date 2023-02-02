@@ -22,6 +22,7 @@
       ansible.builtin.file:
         path: /usr/java
         mode: '777'
+        
      ## when: ansible_facts["hostname"] == "ip-172-31-5-232"
     - name: getting the url
       ansible.builtin.get_url:
@@ -58,4 +59,12 @@
       ansible.builtin.command: sudo update-alternatives --install "/usr/bin/javac" "javac" "/usr/java/jdk-13.0.2/bin/javac" 1
      ## when: ansible_facts["hostname"] == "ip-172-31-5-232"
       
+
+---
+- name: calling the roles
+  hosts: all
+  become: yes
+  roles:
+    role:
+      - jdk
 
