@@ -17,6 +17,9 @@
         recursive: true
     - name: shell command
       ansible.builtin.shell:
-        chdir: /home/babloo/openmrs
+        chdir: /home/ubuntu/openmrs
         cmd: mvn clean package
-    - name: 
+    - name: shell command
+      ansible.builtin.command:
+        chdir: /openmrs/webapp
+        cmd: mvn jetty:run

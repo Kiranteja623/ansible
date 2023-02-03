@@ -29,4 +29,4 @@ manual steps
 
 ```
 * to view the application use public ip/install
-![Preview]("nopcom(1).png")
+![Preview](nopcom(1).png)
