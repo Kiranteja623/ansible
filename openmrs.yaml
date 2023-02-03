@@ -1,0 +1,22 @@
+---
+- name: openmrs
+  hosts: all
+  become: yes
+  tasks:
+    - name: java and maven installation
+      ansible.builtin.apt:
+        name:
+          - openjdk-11-jdk
+          - maven
+        state: present
+        update_cache: true
+    - name: clone the repository
+      ansible.builtin.git:
+        dest: /openmrs
+        repo: https://github.com/openmrs/openmrs-core.git
+        recursive: true
+    - name: shell command
+      ansible.builtin.shell:
+        chdir: /home/babloo/openmrs
+        cmd: mvn clean package
+    - name: 

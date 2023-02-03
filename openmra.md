@@ -14,5 +14,6 @@ cd openmrs-core/webapp
 mvn jetty:run
 
 ```
+* to check maven version use mvn --version
 * for viewing the application use ip:8080/openmrs
  
