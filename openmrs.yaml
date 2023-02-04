@@ -21,5 +21,5 @@
         cmd: mvn clean package
     - name: shell command
       ansible.builtin.command:
-        chdir: /openmrs/webapp
+        chdir: openmrs/webapp/target
         cmd: mvn jetty:run
