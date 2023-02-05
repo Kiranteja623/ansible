@@ -36,3 +36,15 @@ SEARCH THE FOLLOWING TERMS
 * LATENCY
 * FAULT TOLERANCE
 * BUSINESS CONTINUITY AND DISASTER RECOVERY
+
+
+```
+sudo chown +R /opt/tomcat
+sudo sh -c 'chmod +x /opt/tomcat/latest/bin/*.sh
+sudo cp tomcat.service /etc/systemd/system/tomcat.service
+sudo systemctl restart tomcat.service
+sudo cp tomcat-users.xml /opt/tomcat/latest/conf/tomcat-users.xml
+sudo cp context.xml /opt/tomcat/latest/webapps/host-manager/META-INF/context.xml 
+sudo cp hostmanager-context.xml /opt/tomcat/latest/webapps/host-manager/META-INF/context.xml
+sudo systemctl restart tomcat.service
+```

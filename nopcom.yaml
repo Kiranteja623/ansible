@@ -1,0 +1,59 @@
+---
+- name: install nopcommerce
+  hosts: all
+  become: yes
+  tasks:
+    - name: extract microsoft package
+      ansible.builtin.get_url:
+        dest: /tmp
+        url: https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb
+        mode: '777'
+    - name: package
+      ansible.builtin.apt:
+        deb: /tmp/packages-microsoft-prod.deb
+        state: "present"
+    - name: install dotnet-sdk-7.0
+      ansible.builtin.apt:
+        name: dotnet-sdk-7.0
+        state: present
+        update_cache : true
+    - name: install dotnet
+      ansible.builtin.apt:
+        name: aspnetcore-runtime-7.0
+        state: present
+        update_cache: true
+    - name: install nginx
+      ansible.builtin.apt:
+        name: nginx
+        state: present
+        update_cache: true
+    - name: start nginx
+      ansible.builtin.systemd:
+        name: nginx
+        state: "started"
+        enabled: true
+    - name: file edit
+      ansible.builtin.copy:
+        dest: /etc/nginx/sites-available/default
+        content: |
+          # Default server configuration
+          #
+          server {
+            listen 80 default_server;
+            listen [::]:80 default_server;
+
+          server_name   nopCommerce.com;
+
+           location / {
+           proxy_pass         http://localhost:5000;
+           proxy_http_version 1.1;
+           proxy_set_header   Upgrade $http_upgrade;
+           proxy_set_header   Connection keep-alive;
+           proxy_set_header   Host $host;
+           proxy_cache_bypass $http_upgrade;
+           proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+           proxy_set_header   X-Forwarded-Proto $scheme;
+          }
+          }
+
+    - name: 
