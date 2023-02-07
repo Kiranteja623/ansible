@@ -39,6 +39,9 @@ SEARCH THE FOLLOWING TERMS
 
 
 ```
+sudo groupadd tomcat
+sudo -m -U -d /opt/tomcat -s /bin/false
+
 sudo chown +R /opt/tomcat
 sudo sh -c 'chmod +x /opt/tomcat/latest/bin/*.sh
 sudo cp tomcat.service /etc/systemd/system/tomcat.service

@@ -14,7 +14,9 @@
         state: "present"
     - name: install dotnet-sdk-7.0
       ansible.builtin.apt:
-        name: dotnet-sdk-7.0
+        name: 
+          - dotnet-sdk-7.0
+          - unzip
         state: present
         update_cache : true
     - name: install dotnet
@@ -56,4 +58,74 @@
           }
           }
 
-    - name: 
+    - name: create a directory
+      ansible.builtin.file:
+        path: /var/www/nopCommerce
+        state: "directory"
+        mode: '777'
+    - name: wget
+      ansible.builtin.shell:
+        chdir: /var/www/nopCommerce
+        cmd: sudo wget https://github.com/nopSolutions/nopCommerce/releases/download/release-4.60.1/nopCommerce_4.60.1_NoSource_linux_x64.zip
+    - name: untar the file
+      ansible.builtin.unarchive:
+        src: /var/www/nopCommerce/nopCommerce_4.60.1_NoSource_linux_x64.zip
+        dest: /var/www/nopCommerce
+        remote_src: true
+        mode: '777'
+    - name: Create a directory if it does not exist
+      ansible.builtin.file:
+        path: /var/www/nopCommerce/bin
+        state: directory
+        mode: '0777'
+    - name: Create a directory if it does not exist
+      ansible.builtin.file:
+        path: /var/www/nopCommerce/logs
+        state: directory
+        mode: '0777'
+    - name: command
+      ansible.builtin.shell: cd ..
+    - name: file permissions
+      ansible.builtin.file:
+        path: /nopCommerce/
+        group: www-data
+        mode: '0777'
+    - name: file permissions1
+      ansible.builtin.file:
+        path: /nopCommerce/
+        owner: www-data
+        mode: '0777' 
+    - name: file edit2
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/nopCommerce.service
+        content: |
+          [Unit]
+          Description=Example nopCommerce app running on Xubuntu
+
+          [Service]
+          WorkingDirectory=/var/www/nopCommerce
+          ExecStart=/usr/bin/dotnet /var/www/nopCommerce/Nop.Web.dll
+          Restart=always
+          # Restart service after 10 seconds if the dotnet service crashes:
+          RestartSec=10
+          KillSignal=SIGINT
+          SyslogIdentifier=nopCommerce-example
+          User=www-data
+          Environment=ASPNETCORE_ENVIRONMENT=Production
+          Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
+
+          [Install]
+          WantedBy=multi-user.target
+    - name: start the service
+      ansible.builtin.service:
+        name: nopCommerce.service
+        enabled: true
+        state: "started"
+    - name: start the service
+      ansible.builtin.systemd:
+        name: nginx
+        daemon-reload: true
+        state: "restarted"
+
+
+
