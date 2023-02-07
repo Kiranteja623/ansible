@@ -30,3 +30,10 @@ manual steps
 ```
 * to view the application use public ip/install
 ![Preview](nopcom(1).png)
+
+
+app playbook
+------------
+[Refer here](https://github.com/Kiranteja623/ansible/blob/master/nopcom.yaml)
+and page of the app
+![Preview](nopcom2.png)
