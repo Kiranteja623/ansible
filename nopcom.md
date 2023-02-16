@@ -37,3 +37,29 @@ app playbook
 [Refer here](https://github.com/Kiranteja623/ansible/blob/master/nopcom.yaml)
 and page of the app
 ![Preview](nopcom2.png)
+
+
+
+```
+1  sudo apt update && sudo apt install software-properties-common && sudo add-apt-repository --yes --update ppa:ansible/ansible && sudo apt install ansible -y
+    2  sudo adduser teja
+    3  ansible -i host -m ping localhost
+    4  vi jdk.yaml
+    5  ansible-playbook -i host jdk.yaml
+    6  vi jdk.yaml
+    7  ansible-playbook -i host jdk.yaml
+    8  java --version
+
+---
+- name: installing jdk
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: installing jdk
+      ansible.builtin.apt:
+        name: openjdk-17-jdk
+        state: present
+        update_cache: yes
+
+```
+
