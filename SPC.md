@@ -59,4 +59,5 @@ sudo systemctl enable spc.service
  sudo systemctl daemon-reload
  sudo systemctl status spc.service
 ```
-![Preview](images/feb16.png)
+
+![Preview] (feb16.png)
